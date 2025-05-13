@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم فاکتور فروش مبلمان</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #f4f4f9;
+            margin: 40px;
+            color: #333;
+        }
+        .invoice-box {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: none;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .invoice-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        .invoice-header {
+            padding: 25px;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .invoice-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 30px;
+            font-weight: 700;
+            margin: 0 0 15px 0;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+        .top-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #444;
+            padding: 10px 0;
+            position: relative;
+            z-index: 1;
+        }
+        .seller-info {
+            text-align: right;
+        }
+        .fact-no {
+            text-align: left;
+        }
+        .customer-info {
+            padding: 15px 25px;
+            font-size: 15px;
+            background: #fafafa;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 15px;
+            margin: 15px 0;
+        }
+        table th, table td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s ease;
+        }
+        table th {
+            font-weight: 700;
+            border-bottom: 2px solid #ddd;
+        }
+        table tr:hover {
+            background: #f9f9f9;
+        }
+        table tr:last-child td {
+            border-bottom: none;
+        }
+        .summary-row td {
+            font-weight: 700;
+            background: #f5f5f5;
+        }
+        .pay-box {
+            margin: 20px 25px;
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        .pay-box:hover {
+            transform: scale(1.02);
+        }
+        .notes {
+            margin: 20px 25px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .notes-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .notes p {
+            text-align: right;
+            margin: 0;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        .signature-box {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        .signature-box div {
+            text-align: center;
+            width: 45%;
+        }
+        .signature-box strong {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        /* تم‌های جدید با رنگ‌های مشخص‌شده */
+        .theme-1 .invoice-header { 
+            background: linear-gradient(135deg, #4A102A 0%, #6A2A44 100%); 
+            color: #fff;
+        }
+        .theme-1 .invoice-header h1 {
+            color: #FFD700;
+        }
+        .theme-1 .top-info, .theme-1 .seller-info, .theme-1 .fact-no {
+            color: #fff;
+        }
+        .theme-1 .pay-box { 
+            background: linear-gradient(135deg, #4A102A, #6A2A44); 
+            color: white; 
+        }
+        .theme-1 .notes-title { 
+            color: #4A102A; 
+        }
+        .theme-1 table th {
+            background: linear-gradient(135deg, #e8c6d3 0%, #f0d9e2 100%);
+            color: #333;
+        }
+        .theme-1 .summary-row td {
+            background: linear-gradient(135deg, #e8c6d3, #f0d9e2);
+            color: #333;
+        }
+        .theme-btn.theme-1 { 
+            background: linear-gradient(135deg, #4A102A, #6A2A44); 
+            color: white;
+        }
+        .theme-2 .invoice-header { 
+            background: linear-gradient(135deg, #393E46 0%, #596069 100%); 
+            color: #fff;
+        }
+        .theme-2 .invoice-header h1 {
+            color: #E0E0E0;
+        }
+        .theme-2 .top-info, .theme-2 .seller-info, .theme-2 .fact-no {
+            color: #fff;
+        }
+        .theme-2 .pay-box { 
+            background: linear-gradient(135deg, #393E46, #596069); 
+            color: white; 
+        }
+        .theme-2 .notes-title { 
+            color: #393E46; 
+        }
+        .theme-2 table th {
+            background: linear-gradient(135deg, #d4d7db 0%, #e6e8eb 100%);
+            color: #333;
+        }
+        .theme-2 .summary-row td {
+            background: linear-gradient(135deg, #d4d7db, #e6e8eb);
+            color: #333;
+        }
+        .theme-btn.theme-2 { 
+            background: linear-gradient(135deg, #393E46, #596069); 
+            color: white;
+        }
+        .theme-3 .invoice-header { 
+            background: linear-gradient(135deg, #948979 0%, #a8a299 100%); 
+        }
+        .theme-3 .invoice-header h1 {
+            color: #3C2F2F;
+        }
+        .theme-3 .pay-box { 
+            background: linear-gradient(135deg, #948979, #a8a299); 
+            color: white; 
+        }
+        .theme-3 .notes-title { 
+            color: #948979; 
+        }
+        .theme-3 table th {
+            background: linear-gradient(135deg, #e3ded4 0%, #edebe6 100%);
+            color: #333;
+        }
+        .theme-3 .summary-row td {
+            background: linear-gradient(135deg, #e3ded4, #edebe6);
+            color: #333;
+        }
+        .theme-btn.theme-3 { 
+            background: linear-gradient(135deg, #948979, #a8a299); 
+            color: white;
+        }
+        .theme-4 .invoice-header { 
+            background: linear-gradient(135deg, #7C4585 0%, #9b5ca3 100%); 
+            color: #fff;
+        }
+        .theme-4 .invoice-header h1 {
+            color: #F4D4FA;
+        }
+        .theme-4 .top-info, .theme-4 .seller-info, .theme-4 .fact-no {
+            color: #fff;
+        }
+        .theme-4 .pay-box { 
+            background: linear-gradient(135deg, #7C4585, #9b5ca3); 
+            color: white; 
+        }
+        .theme-4 .notes-title { 
+            color: #7C4585; 
+        }
+        .theme-4 table th {
+            background: linear-gradient(135deg, #e0c9e4 0%, #ecddec 100%);
+            color: #333;
+        }
+        .theme-4 .summary-row td {
+            background: linear-gradient(135deg, #e0c9e4, #ecddec);
+            color: #333;
+        }
+        .theme-btn.theme-4 { 
+            background: linear-gradient(135deg, #7C4585, #9b5ca3); 
+            color: white;
+        }
+        .theme-5 .invoice-header { 
+            background: linear-gradient(135deg, #FE7743 0%, #ff9a6f 100%); 
+        }
+        .theme-5 .invoice-header h1 {
+            color: #FFF;
+        }
+        .theme-5 .pay-box { 
+            background: linear-gradient(135deg, #FE7743, #ff9a6f); 
+            color: white; 
+        }
+        .theme-5 .notes-title { 
+            color: #FE7743; 
+        }
+        .theme-5 table th {
+            background: linear-gradient(135deg, #ffd0bf 0%, #ffe6dd 100%);
+            color: #333;
+        }
+        .theme-5 .summary-row td {
+            background: linear-gradient(135deg, #ffd0bf, #ffe6dd);
+            color: #333;
+        }
+        .theme-btn.theme-5 { 
+            background: linear-gradient(135deg, #FE7743, #ff9a6f); 
+            color: white;
+        }
+        .theme-6 .invoice-header { 
+            background: linear-gradient(135deg, #3D90D7 0%, #62a7e8 100%); 
+        }
+        .theme-6 .invoice-header h1 {
+            color: #FFF;
+        }
+        .theme-6 .pay-box { 
+            background: linear-gradient(135deg, #3D90D7, #62a7e8); 
+            color: white; 
+        }
+        .theme-6 .notes-title { 
+            color: #3D90D7; 
+        }
+        .theme-6 table th {
+            background: linear-gradient(135deg, #bfd8f3 0%, #d9e7f9 100%);
+            color: #333;
+        }
+        .theme-6 .summary-row td {
+            background: linear-gradient(135deg, #bfd8f3, #d9e7f9);
+            color: #333;
+        }
+        .theme-btn.theme-6 { 
+            background: linear-gradient(135deg, #3D90D7, #62a7e8); 
+            color: white;
+        }
+        .form-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: none;
+        }
+        .form-row {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 700;
+            color: #444;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 14px;
+        }
+        button {
+            background: #787424;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 700;
+            margin-left: 10px;
+            transition: background 0.2s ease;
+        }
+        button:hover {
+            background: #6a6a20;
+        }
+        .theme-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .theme-btn {
+            margin: 5px;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Vazirmatn', sans-serif;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .theme-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .item-row {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+        }
+        .delete-btn {
+            background: #e74c3c;
+            margin-top: 10px;
+        }
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+        .seller-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        @media print {
+            body { background: none; margin: 0; }
+            .form-container { display: none; }
+            .invoice-box {
+                box-shadow: none;
+                transform: none;
+                margin: 0;
+                padding: 10px;
+            }
+            .invoice-box:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            .pay-box {
+                box-shadow: none;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 style="text-align: center; color: #4d4d1a;">فرم ایجاد فاکتور جدید</h2>
+        <div class="seller-form">
+            <h3 style="text-align: center; color: #4d4d1a;">اطلاعات فروشنده</h3>
+            <div class="form-row">
+                <label for="seller-name">نام فروشنده *</label>
+                <input type="text" id="seller-name" required>
+            </div>
+            <div class="form-row">
+                <label for="seller-address">آدرس فروشنده</label>
+                <textarea id="seller-address" rows="2"></textarea>
+            </div>
+            <div class="form-row">
+                <label for="seller-phone">تلفن فروشنده</label>
+                <input type="tel" id="seller-phone">
+            </div>
+            <button onclick="saveSellerInfo()">ذخیره اطلاعات فروشنده</button>
+        </div>
+        <div class="theme-selector">
+            <button class="theme-btn theme-1" onclick="setTheme('theme-1')">تم 1</button>
+            <button class="theme-btn theme-2" onclick="setTheme('theme-2')">تم 2</button>
+            <button class="theme-btn theme-3" onclick="setTheme('theme-3')">تم 3</button>
+            <button class="theme-btn theme-4" onclick="setTheme('theme-4')">تم 4</button>
+            <button class="theme-btn theme-5" onclick="setTheme('theme-5')">تم 5</button>
+            <button class="theme-btn theme-6" onclick="setTheme('theme-6')">تم 6</button>
+        </div>
+        <div class="customer-details">
+            <div class="form-row">
+                <label for="customer-name">نام کامل مشتری *</label>
+                <input type="text" id="customer-name" required>
+            </div>
+            <div class="form-row">
+                <label for="customer-phone">تلفن مشتری</label>
+                <input type="tel" id="customer-phone">
+            </div>
+        </div>
+        <div class="form-row">
+            <label for="customer-address">آدرس مشتری</label>
+            <textarea id="customer-address" rows="2"></textarea>
+        </div>
+        <div class="form-row">
+            <label>آیتم‌های فاکتور:</label>
+            <div id="items-container">
+                <div class="item-row">
+                    <div class="form-row">
+                        <label>نام آیتم *</label>
+                        <input type="text" class="item-name" required>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>قیمت واحد (ریال) *</label>
+                            <input type="number" class="item-price" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>تعداد *</label>
+                            <input type="number" class="item-qty" value="1" min="1">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>تخفیف (ریال)</label>
+                            <input type="number" class="item-discount" value="0" min="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>توضیحات آیتم</label>
+                        <input type="text" class="item-desc">
+                    </div>
+                    <button class="delete-btn" onclick="this.parentElement.remove()">حذف آیتم</button>
+                </div>
+            </div>
+            <button onclick="addItem()">+ افزودن آیتم</button>
+        </div>
+        <div class="form-row">
+            <label for="deposit">بیعانه (ریال)</label>
+            <input type="number" id="deposit" value="0" min="0">
+        </div>
+        <div class="form-row">
+            <label for="notes">توضیحات فاکتور:</label>
+            <textarea id="notes" rows="2"></textarea>
+        </div>
+        <div class="form-actions">
+            <button onclick="generateInvoice()">تولید فاکتور</button>
+            <button onclick="printInvoice()">چاپ فاکتور</button>
+            <button onclick="clearForm()">پاک کردن فرم</button>
+        </div>
+    </div>
+    <div id="invoice-preview" class="invoice-box theme-1" style="display:none;"></div>
+    <script>
+        // لود اطلاعات فروشنده از localStorage یا تنظیم پیش‌فرض
+        function loadSellerInfo() {
+            const defaultSeller = {
+                name: 'تولیدی مبل باران',
+                address: 'خ عرفان',
+                phone: '09125118804'
+            };
+            const savedSeller = JSON.parse(localStorage.getItem('sellerInfo')) || defaultSeller;
+            document.getElementById('seller-name').value = savedSeller.name;
+            document.getElementById('seller-address').value = savedSeller.address || '';
+            document.getElementById('seller-phone').value = savedSeller.phone || '';
+            return savedSeller;
+        }
+
+        // ذخیره اطلاعات فروشنده در localStorage
+        function saveSellerInfo() {
+            const sellerName = document.getElementById('seller-name').value;
+            if (!sellerName.trim()) {
+                alert('نام فروشنده ضروری است!');
+                return;
+            }
+            const sellerInfo = {
+                name: sellerName,
+                address: document.getElementById('seller-address').value,
+                phone: document.getElementById('seller-phone').value
+            };
+            localStorage.setItem('sellerInfo', JSON.stringify(sellerInfo));
+            alert('اطلاعات فروشنده ذخیره شد!');
+        }
+
+        // لود اطلاعات فروشنده موقع باز شدن صفحه
+        window.onload = loadSellerInfo;
+
+        function setTheme(theme) {
+            document.getElementById('invoice-preview').className = `invoice-box ${theme}`;
+        }
+
+        function addItem() {
+            const container = document.getElementById('items-container');
+            const newItem = document.createElement('div');
+            newItem.className = 'item-row';
+            newItem.innerHTML = `
+                <div class="form-row">
+                    <label>نام آیتم *</label>
+                    <input type="text" class="item-name" required>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>قیمت واحد (ریال) *</label>
+                        <input type="number" class="item-price" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>تعداد *</label>
+                        <input type="number" class="item-qty" value="1" min="1">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>تخفیف (ریال)</label>
+                        <input type="number" class="item-discount" value="0" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label>توضیحات آیتم</label>
+                    <input type="text" class="item-desc">
+                </div>
+                <button class="delete-btn" onclick="this.parentElement.remove()">حذف آیتم</button>
+            `;
+            container.appendChild(newItem);
+        }
+
+        function generateInvoice() {
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.style.borderColor = 'red';
+                    isValid = false;
+                } else {
+                    field.style.borderColor = '#ddd';
+                }
+            });
+            if (!isValid) return alert('فیلدهای ضروری را پر کنید!');
+            const customerName = document.getElementById('customer-name').value;
+            const customerPhone = document.getElementById('customer-phone').value || 'ثبت نشده';
+            const customerAddress = document.getElementById('customer-address').value || 'ثبت نشده';
+            const deposit = parseInt(document.getElementById('deposit').value) || 0;
+            const notes = document.getElementById('notes').value || 'توضیحاتی ثبت نشده است';
+            const sellerInfo = loadSellerInfo();
+            let itemsHtml = '';
+            let total = 0;
+            document.querySelectorAll('.item-row').forEach((row, index) => {
+                const name = row.querySelector('.item-name').value;
+                const desc = row.querySelector('.item-desc').value || '';
+                const price = parseInt(row.querySelector('.item-price').value) || 0;
+                const qty = parseInt(row.querySelector('.item-qty').value) || 1;
+                const discount = parseInt(row.querySelector('.item-discount').value) || 0;
+                const itemTotal = (price * qty) - discount;
+                total += itemTotal;
+                itemsHtml += `
+                    <tr>
+                        <td>${index+1}. ${name}${desc ? '<br><small>' + desc + '</small>' : ''}</td>
+                        <td>${price.toLocaleString('fa-IR')}</td>
+                        <td>${qty} عدد</td>
+                        <td>${discount.toLocaleString('fa-IR')}</td>
+                        <td>${itemTotal.toLocaleString('fa-IR')}</td>
+                    </tr>
+                `;
+            });
+            const payable = total - deposit;
+            const today = new Date().toLocaleDateString('fa-IR');
+            const invoiceNumber = `BSVQ-${Date.now().toString().slice(-6)}`;
+            const currentTheme = document.getElementById('invoice-preview').className.split(' ')[1] || 'theme-1';
+            const invoiceHTML = `
+                <div class="invoice-header">
+                    <h1>فاکتور فروش</h1>
+                    <div class="top-info">
+                        <div class="seller-info">
+                            <strong>${sellerInfo.name}</strong><br>
+                            آدرس: ${sellerInfo.address || 'ثبت نشده'}<br>
+                            تلفن: ${sellerInfo.phone || 'ثبت نشده'}
+                        </div>
+                        <div class="fact-no">
+                            تاریخ: ${today}<br>
+                            شماره فاکتور: ${invoiceNumber}
+                        </div>
+                    </div>
+                </div>
+                <div class="customer-info">
+                    <div><strong>مشتری:</strong> ${customerName}</div>
+                    <div><strong>تلفن:</strong> ${customerPhone}</div>
+                    <div><strong>آدرس:</strong> ${customerAddress}</div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>اقلام</th>
+                            <th>فی (ریال)</th>
+                            <th>مقدار</th>
+                            <th>تخفیف (ریال)</th>
+                            <th>قیمت کل (ریال)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHtml}
+                        <tr class="summary-row">
+                            <td colspan="4">جمع اقلام</td>
+                            <td>${total.toLocaleString('fa-IR')} ریال</td>
+                        </tr>
+                        <tr class="summary-row">
+                            <td colspan="4">بیعانه</td>
+                            <td>${deposit.toLocaleString('fa-IR')} ریال</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="pay-box">
+                    <span>قابل پرداخت:</span>
+                    ${payable.toLocaleString('fa-IR')} ریال
+                </div>
+                <div class="notes">
+                    <div class="notes-title">توضیحات</div>
+                    <p>${notes.replace(/\n/g, '<br>')}</p>
+                </div>
+                <div class="signature-box">
+                    <div>
+                        <strong>امضای فروشنده</strong>
+                    </div>
+                    <div>
+                        <strong>امضای خریدار</strong>
+                    </div>
+                </div>
+            `;
+            const invoicePreview = document.getElementById('invoice-preview');
+            invoicePreview.innerHTML = invoiceHTML;
+            invoicePreview.className = `invoice-box ${currentTheme}`;
+            invoicePreview.style.display = 'block';
+            window.scrollTo({
+                top: invoicePreview.offsetTop,
+                behavior: 'smooth'
+            });
+        }
+
+        function printInvoice() {
+            if (!document.getElementById('invoice-preview').innerHTML) {
+                return alert('ابتدا فاکتور را تولید کنید!');
+            }
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="fa" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>چاپ فاکتور</title>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700&display=swap');
+                        ${document.querySelector('style').innerHTML}
+                    </style>
+                </head>
+                <body>
+                    ${document.getElementById('invoice-preview').outerHTML}
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function clearForm() {
+            if (!confirm('آیا مطمئنید؟')) return;
+            document.getElementById('items-container').innerHTML = document.querySelector('.item-row').outerHTML;
+            document.getElementById('invoice-preview').style.display = 'none';
+            document.querySelectorAll('input:not(#seller-name, #seller-address, #seller-phone), textarea:not(#seller-address)').forEach(el => el.value = '');
+        }
+    </script>
+</body>
+</html>
